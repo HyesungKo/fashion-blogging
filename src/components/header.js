@@ -18,6 +18,8 @@ import { ref as dbRef, set }  from 'firebase/database';
 import { ref as stRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -44,9 +46,13 @@ function HeaderBar() {
     const [imageInfo, setImageInfo] = React.useState([]);
     
     const [open, setOpen] = React.useState(false);
+    const [openProfile, setOpenProfile] = React.useState(false); 
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     
+    const handleOpenProfile = () => setOpenProfile(!openProfile);
+
     React.useEffect(() => {
         if(images.length < 1) return;
 
@@ -152,16 +158,22 @@ function HeaderBar() {
                                 Fashion Items
                             </Typography>
                         </Toolbar>
-                        <Button
-                            variant="outlined"
-                            color="inherit"
-                            onClick={handleOpen}
-                        >
-                            <AddCircleOutlineIcon sx={{ mr: 1 }} />
-                            <Typography color="inherit" noWrap>
-                                New
-                            </Typography>
-                        </Button>
+                        <Box>
+                            <Button
+                                variant="outlined"
+                                color="inherit"
+                                onClick={handleOpen}
+                            >
+                                <AddCircleOutlineIcon sx={{ mr: 1 }} />
+                                <Typography color="inherit" noWrap>
+                                    New
+                                </Typography>
+                            </Button>
+
+                            <Button sx={{ ml: 2 }} variant="text" disabled={false} onClick={handleOpenProfile}>
+                                <AccountCircleIcon sx={{ fontSize: 35, color: "white" }} />   
+                            </Button>
+                        </Box>
                     </Grid>
                 </Container>
          </AppBar>
