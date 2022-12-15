@@ -1,17 +1,14 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
-import exImg from './../assets/main3.JPG';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import PropTypes from 'prop-types';
 import Link from '@mui/material/Link'
-import { InfoRounded } from '@mui/icons-material';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -49,7 +46,6 @@ function a11yProps(index) {
 
 function Post({post}) {
     const [value, setValue] = React.useState(0);
-
     const postInfo = Object.values(post.info);
 
     const handleChange = (event, newValue) => {
@@ -101,7 +97,7 @@ function Post({post}) {
                             }
                             { info.category != undefined &&
                                 <Link href={info.link} underline="hover">
-                                Where to buy {info.category}
+                                Where to buy
                                 </Link>
                             }
                         </CardContent> 
