@@ -3,7 +3,7 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 
-import { db, storage } from './../firebase';
+import { db, storage, auth } from './../firebase';
 import { ref as dbRef, set }  from 'firebase/database';
 import { ref as stRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -88,8 +88,10 @@ function PostModal({open, handleClose}) {
     function upload() {
         if(title !== "") {
             const postId = Date.now();
+            const user = auth.currentUser
             set(dbRef(db, `posts/${postId}`), {
                 title: title,
+                uid: user.uid
             }).then(() => {
                 for(let i = 0; i < imageInfo.length; i++) {
                     set(dbRef(db, `posts/${postId}/info/img${i}`), {
