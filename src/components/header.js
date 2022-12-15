@@ -33,7 +33,6 @@ function HeaderBar() {
 
     React.useEffect(() => {
         onAuthStateChanged(auth, user => {
-            console.log(user);
             if(user) {
                 loginSuccess();
             }
