@@ -29,7 +29,7 @@ function Login({toggleDrawer, loginSuccess}) {
             }).catch(err => {
                 alert("something Wrong!");
             })
-        }). catch(() => {
+        }).catch(() => {
             alert("Something Wrong!")
         })
         

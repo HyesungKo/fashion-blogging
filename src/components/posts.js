@@ -2,7 +2,7 @@ import Post from './post';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { db } from './../firebase';
-import { ref, onValue, get } from 'firebase/database';
+import { ref, get } from 'firebase/database';
 import { useState, useEffect } from 'react';
 
 
