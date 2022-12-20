@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 
 import { db, storage, auth } from './../firebase';
-import { ref as dbRef, set, update }  from 'firebase/database';
+import { ref as dbRef, set, update, remove }  from 'firebase/database';
 import { ref as stRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import IconButton from '@mui/material/IconButton';
@@ -31,10 +31,10 @@ function PostModal({open, handleClose, editingPost}) {
     const [imageInfo, setImageInfo] = useState([]);
 
     useEffect(() => {
+        // console.log(editingPost);
         if(editingPost !== null) {
             setTitle(editingPost.title)
             setImageInfo([])
-            
             Object.values(editingPost.info).forEach(value => {
                 setImageInfo(prevInfo => [...prevInfo, value]);
             })
@@ -56,7 +56,6 @@ function PostModal({open, handleClose, editingPost}) {
         }
 
     }, [images, editingPost])
-    
 
     function onImageChange(e) {
         setImages([...e.target.files]);
@@ -122,7 +121,13 @@ function PostModal({open, handleClose, editingPost}) {
                             link: imageInfo[i].link
                         }).then(() => {
                             if(i === imageInfo.length - 1) {
-                                alert("Saved!!")
+                                if(Object.values(editingPost.info).length > imageInfo.length) {
+                                    for(let j = imageInfo.length; j < Object.values(editingPost.info).length; j++) {
+                                        remove(dbRef(db, `posts/${postId}/info/img${j}`))
+                                    }
+                                }else {
+                                    alert("Saved!!")
+                                }
                             }
                         })
                     }
@@ -213,6 +218,7 @@ function PostModal({open, handleClose, editingPost}) {
                                     <MenuItem value={"Tops"}>Tops</MenuItem>
                                     <MenuItem value={"Sunglasses"}>Sunglasses</MenuItem>
                                     <MenuItem value={"Shoes"}>Shoes</MenuItem>
+                                    <MenuItem value={"Outwears"}>Outwears</MenuItem>
                                     <MenuItem value={"Others"}>Others</MenuItem>
                                 </Select>
                             </FormControl>

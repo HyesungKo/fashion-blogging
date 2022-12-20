@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import PropTypes from 'prop-types';
+import Link from '@mui/material/Link'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;

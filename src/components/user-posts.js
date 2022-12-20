@@ -19,6 +19,7 @@ function UserPosts({user}) {
     const handleOpen = () => setOpen(true);
     
     useEffect(() => {
+        // console.log(posts[0])
         let userPost = [];
         get(ref(db, 'posts')).then(snapshots => {
             snapshots.forEach(snapshot => {
@@ -32,7 +33,7 @@ function UserPosts({user}) {
         }).then(() => {
             setPosts(userPost)
         })
-    }, )
+    }, [user.id])
 
     const openEditPost = (index) => {
         setEditPost(posts[index])
@@ -40,8 +41,8 @@ function UserPosts({user}) {
     }
 
     return (
-        <Box>
-            {posts.map((post, index) =>
+        <Box sx={{overflow:"auto"}}>
+            {posts.reverse().map((post, index) =>
                 <Card key={post.id + index} sx={{ display: 'flex', marginBottom: 2, cursor: "pointer" }} onClick={() => openEditPost(index)}>
                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                         <CardContent sx={{ flex: '1 0 auto' }}>
