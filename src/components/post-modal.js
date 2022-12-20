@@ -4,8 +4,10 @@ import TextField from '@mui/material/TextField';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 
 import { db, storage, auth } from './../firebase';
-import { ref as dbRef, set }  from 'firebase/database';
+import { ref as dbRef, set, update }  from 'firebase/database';
 import { ref as stRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import IconButton from '@mui/material/IconButton';
 
 const style = {
     position: 'absolute',
@@ -22,29 +24,38 @@ const style = {
     overflow: 'auto'
 };
 
-function PostModal({open, handleClose}) {
+function PostModal({open, handleClose, editingPost}) {
 
     const [title, setTitle] = useState("");
     const [images, setImages] = useState([]);
     const [imageInfo, setImageInfo] = useState([]);
 
     useEffect(() => {
-        if(images.length < 1) return;
-
-        images.forEach((image, index) => {
-            const storageRef = stRef(storage, `images/${Math.floor(Date.now())}${index}`);
-            uploadBytes(storageRef, image).then(() => {
-                getDownloadURL(storageRef).then(url => {
-                    setImageInfo(prevInfo => [...prevInfo, {
-                        'url': url,
-                        'category': '',
-                        'caption': '',
-                        'link': ''
-                    }]);
-                })                
+        if(editingPost !== null) {
+            setTitle(editingPost.title)
+            setImageInfo([])
+            
+            Object.values(editingPost.info).forEach(value => {
+                setImageInfo(prevInfo => [...prevInfo, value]);
             })
-        });
-    }, [images])
+        } else  {
+            if(images.length < 1) return;
+            images.forEach((image, index) => {
+                const storageRef = stRef(storage, `images/${Math.floor(Date.now())}${index}`);
+                uploadBytes(storageRef, image).then(() => {
+                    getDownloadURL(storageRef).then(url => {
+                        setImageInfo(prevInfo => [...prevInfo, {
+                            url: url,
+                            category: '',
+                            caption: '',
+                            link: '',
+                        }]);
+                    })                
+                })
+            });
+        }
+
+    }, [images, editingPost])
     
 
     function onImageChange(e) {
@@ -85,34 +96,74 @@ function PostModal({open, handleClose}) {
         )
     }
 
-    function upload() {
+    function uploadPost() {
         if(title !== "") {
-            const postId = Date.now();
-            const user = auth.currentUser
-            set(dbRef(db, `posts/${postId}`), {
-                title: title,
-                uid: user.uid
-            }).then(() => {
-                for(let i = 0; i < imageInfo.length; i++) {
-                    set(dbRef(db, `posts/${postId}/info/img${i}`), {
-                        'url': imageInfo[i].url,
-                        'category': imageInfo[i].category,
-                        'caption': imageInfo[i].caption,
-                        'link': imageInfo[i].link
-                    }).then(() => {
-                        if(i === imageInfo.length - 1) {
-                            setTitle("");
-                            setImages([]);
-                            setImageInfo([]);
-                            handleClose()
-                            alert("Posted!!")
-                        }
-                    })
-                }
-            }).catch((e) => {
-                alert("error!");
-            })
+            let postId;
+            let modifiedAt = Date.now();
+            if(editingPost) {
+                postId = editingPost.id
+            } else {
+                postId = modifiedAt;
+            }
+            const userId = auth.currentUser.uid;
+
+            if(editingPost) {
+                update(dbRef(db, `posts/${postId}`), {
+                    title: title,
+                    uid: userId,
+                    createdAt: postId,
+                    modifiedAt: modifiedAt
+                }).then(() => {
+                    for(let i = 0; i < imageInfo.length; i++) {
+                        update(dbRef(db, `posts/${postId}/info/img${i}`), {
+                            url: imageInfo[i].url,
+                            category: imageInfo[i].category,
+                            caption: imageInfo[i].caption,
+                            link: imageInfo[i].link
+                        }).then(() => {
+                            if(i === imageInfo.length - 1) {
+                                alert("Saved!!")
+                            }
+                        })
+                    }
+                }).catch((e) => {
+                    alert("error!");
+                })
+            } else {
+                set(dbRef(db, `posts/${postId}`), {
+                    title: title,
+                    uid: userId,
+                    createdAt: postId,
+                    modifiedAt: modifiedAt
+                }).then(() => {
+                    for(let i = 0; i < imageInfo.length; i++) {
+                        set(dbRef(db, `posts/${postId}/info/img${i}`), {
+                            url: imageInfo[i].url,
+                            category: imageInfo[i].category,
+                            caption: imageInfo[i].caption,
+                            link: imageInfo[i].link
+                        }).then(() => {
+                            if(i === imageInfo.length - 1) {
+                                setTitle("");
+                                setImages([]);
+                                setImageInfo([]);
+                                handleClose()
+                                alert("Posted!!")
+                            }
+                        })
+                    }
+                }).catch((e) => {
+                    alert("error!");
+                })
+            }
+
         }
+    }
+
+    const removePicture = (index) => {
+        setImageInfo(prevImageInfo => 
+            prevImageInfo.filter((val, i) => i !== index)    
+        )
     }
 
     return (
@@ -134,9 +185,14 @@ function PostModal({open, handleClose}) {
                     imageInfo.map((info, index) =>
                         
                         <Box sx={{ pl: 1, py: 1 }} key={index}>
-                            <Typography variant='h6' color="inherit" noWrap>
-                            Image {index+1}
-                            </Typography>
+                            <Box mb={1} sx={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+                                <Typography variant='h6' color="inherit" noWrap>
+                                    Image {index+1}
+                                </Typography>
+                                <IconButton onClick={() => removePicture(index)}>
+                                    <DeleteForeverIcon sx={{fontSize: 30, color: "red"}} />
+                                </IconButton>
+                            </Box>
                             <img src={info.url} style={{objectFit: "contain", width: "100%", height: 400, backgroundColor: "black"}} alt="" />
                             <FormControl fullWidth sx={{ width: "100%", marginTop: 1 }}>
                                 <InputLabel id="demo-simple-select-label">Category</InputLabel>
@@ -166,7 +222,8 @@ function PostModal({open, handleClose}) {
                     )
                 }
                 
-                <Button variant="contained" sx={{ width: "100%"}} disabled={false} onClick={upload}>Upload</Button>
+                <Button variant="contained" sx={{ width: "100%"}} disabled={false} onClick={uploadPost}>{editingPost? "Save": "Upload"}</Button>
+                
             </Box>
         </Modal>
     )
