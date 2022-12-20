@@ -8,7 +8,6 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import PropTypes from 'prop-types';
-import Link from '@mui/material/Link'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -86,16 +85,17 @@ function Post({post}) {
                     <TabPanel key={`${post.title}detailinfo${index}`} value={value} index={index}>
                         <img
                             src={info.url}
+                            alt={info.caption + "1"}
                             style={{objectFit: "contain", width: "100%", height: 400}}
                         />
                         <CardContent>
                             {
-                                info.caption != undefined &&
+                                info.caption !== undefined &&
                                 <Typography variant="body1" color="text.secondary">
                                     {info.caption}
                                 </Typography>
                             }
-                            { info.category != undefined &&
+                            { info.category !== undefined &&
                                 <Link href={info.link} underline="hover">
                                 Where to buy
                                 </Link>
