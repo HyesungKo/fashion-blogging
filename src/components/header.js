@@ -17,8 +17,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Profile from './profile';
 import PostModal from './post-modal';
 
-import { auth } from './../firebase';
+import { auth, db } from './../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { ref as dbRef, set, get }  from 'firebase/database';
 
 function HeaderBar() {
 
@@ -35,11 +36,22 @@ function HeaderBar() {
     useEffect(() => {
         onAuthStateChanged(auth, user => {
             if(user) {
-                setCurUser(user);
-                loginSuccess();
+                set(dbRef(db, `profile/${user.uid}/lastLoggedIn`) , Date.now()).then(() => {
+                    get(dbRef(db, `profile/${user.uid}`)).then(snapshot => {
+                        setCurUser(snapshot.val());
+                        loginSuccess();
+                    })
+                })
             }
         })
     }, [])
+
+    const changeUserName = (userName) => {
+        setCurUser(prevUser => ({
+            ...prevUser,
+            userName: userName
+        }))
+    }
 
     const loginSuccess = () => setLoggedIn(true);
     const logoutSuccess = () => setLoggedIn(false);
@@ -57,7 +69,7 @@ function HeaderBar() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <AppBar position="relative" style={{backgroundColor: "#222"}}>
+            <AppBar position="sticky" style={{backgroundColor: "#222"}}>
                 <Container>
                     <Grid
                         container
@@ -93,13 +105,13 @@ function HeaderBar() {
                                     open={openAccount}
                                     onClose={toggleDrawer(false)}
                                 >
-                                    <Profile user={curUser} loggedIn={loggedIn} loginSuccess={loginSuccess} logoutSuccess={logoutSuccess} toggleDrawer={toggleDrawer} />
+                                    <Profile user={curUser} changeUserName={changeUserName} loggedIn={loggedIn} loginSuccess={loginSuccess} logoutSuccess={logoutSuccess} toggleDrawer={toggleDrawer} />
                                 </Drawer>
                             </Fragment>
                         </Box>
                     </Grid>
                 </Container>
-                <PostModal open={open} handleClose={handleClose} />
+                <PostModal open={open} handleClose={handleClose} editingPost={null}/>
          </AppBar>
             
         </ThemeProvider>

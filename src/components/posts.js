@@ -13,8 +13,9 @@ function Posts() {
     useEffect(() => {
         const postRef = ref(db, 'posts');
         get(postRef).then(snapshots => {
-           snapshots.forEach(snapshot => {
-               const data = snapshot.val();
+            setposts([])
+            snapshots.forEach(snapshot => {
+                const data = snapshot.val();
                 setposts(prevPosts => [...prevPosts, data]);
            })
         })

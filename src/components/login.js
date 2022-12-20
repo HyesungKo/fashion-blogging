@@ -1,8 +1,8 @@
-import { auth } from "./../firebase";
 import  { signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
-
+import { auth, db } from "./../firebase";
+import { ref as dbRef, set }  from 'firebase/database';
 
 function Login({toggleDrawer, loginSuccess}) {
 
@@ -24,10 +24,14 @@ function Login({toggleDrawer, loginSuccess}) {
     function logInWithEmailPassword() {
         setPersistence(auth, browserLocalPersistence).then(() => {
             return signInWithEmailAndPassword(auth, email, password).then(credential => {
-                alert("Login Successful!");
-                loginSuccess()
+                set(dbRef(db, `profile/${credential.user.uid}/lastLoggedIn`) , Date.now()).then(() => {
+                    alert("Login Successful!");
+                    loginSuccess()
+                }).catch(() => {
+                    alert("Something Wrong")
+                })
             }).catch(err => {
-                alert("something Wrong!");
+                alert(err.message);
             })
         }).catch(() => {
             alert("Something Wrong!")
@@ -37,11 +41,19 @@ function Login({toggleDrawer, loginSuccess}) {
 
     function register() {
         setPersistence(auth, browserLocalPersistence).then(() => {
-            createUserWithEmailAndPassword(auth, email, password).then(() => {
-                alert("Account Created");
-                loginSuccess();
-            }).catch(() => {
-                alert("Somthings Wrong, try again!")
+            createUserWithEmailAndPassword(auth, email, password).then(credential => {
+                set(dbRef(db, `profile/${credential.user.uid}`) , {
+                    email: credential.user.email,
+                    userName: "",
+                    userImageUrl: "",
+                    createdAt: Date.now(),
+                    lastLoggedIn: Date.now()
+                }).then(() => {
+                    alert("Account Created");
+                    loginSuccess();
+                })
+            }).catch(err => {
+                alert(err.message)
             })
         }).catch(() => {
             alert("Somthings Wrong, try again!")
