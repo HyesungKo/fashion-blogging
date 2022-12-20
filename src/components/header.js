@@ -66,7 +66,7 @@ function HeaderBar() {
                         <Toolbar>
                             <CameraIcon sx={{ mr: 2 }} />
                             <Typography variant="h5" color="inherit" noWrap>
-                                Fashion Items
+                                Celebrity Fashion
                             </Typography>
                         </Toolbar>
                         <Box>
