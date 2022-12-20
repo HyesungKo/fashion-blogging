@@ -8,7 +8,6 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import PropTypes from 'prop-types';
-import Link from '@mui/material/Link'
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -96,9 +95,9 @@ function Post({post}) {
                                 </Typography>
                             }
                             { info.category != undefined &&
-                                <Link href={info.link} underline="hover">
+                                <a href={info.link} target>
                                 Where to buy
-                                </Link>
+                                </a>
                             }
                         </CardContent> 
                     </TabPanel>
