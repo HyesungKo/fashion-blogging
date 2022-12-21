@@ -39,6 +39,8 @@ function Posts({searchTerm}) {
                             </Grid>
                         )
                         :
+
+                        searchTerm !== "" &&
                         <Box
                             sx={{width: "100%", padding: 20}}    
                         >
