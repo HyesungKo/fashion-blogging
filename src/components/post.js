@@ -64,6 +64,10 @@ function Post({post}) {
                     </Avatar>
                 }
                 title={post.title}
+                titleTypographyProps={{
+                    fontSize: 20,
+                    fontWeight: 500
+                }}
             >
             </CardHeader>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>

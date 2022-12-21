@@ -6,20 +6,22 @@ import { ref, get } from 'firebase/database';
 import { useState, useEffect } from 'react';
 
 
-function Posts() {
+function Posts({searchTerm}) {
 
-    const [posts, setposts] = useState([]);
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const postRef = ref(db, 'posts');
         get(postRef).then(snapshots => {
-            setposts([])
+            setPosts([]);
             snapshots.forEach(snapshot => {
                 const data = snapshot.val();
-                setposts(prevPosts => [...prevPosts, data]);
+                if(data.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+                    setPosts(prevPosts => [...prevPosts, data]);
+                }
            })
         })
-    }, [])
+    }, [searchTerm])
 
     return  (
         <div>
@@ -29,6 +31,7 @@ function Posts() {
                     spacing={1}
                 >
                     {
+                        posts.length > 0 &&
                         posts.reverse().map((post, index) =>
                             <Grid item key={`post${index}`} xs={12} md={6}>
                                 <Post post={post} />

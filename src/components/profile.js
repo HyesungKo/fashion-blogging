@@ -4,7 +4,7 @@ import Login from "./login";
 import { Edit } from "@mui/icons-material";
 
 import { auth, db } from "./../firebase";
-import { ref as dbRef, set }  from 'firebase/database';
+import { ref as dbRef, update }  from 'firebase/database';
 import { signOut } from "firebase/auth";
 import UserPosts from "./user-posts";
 
@@ -28,10 +28,14 @@ function Profile ({user, changeUserName, loggedIn, loginSuccess, logoutSuccess, 
     }
 
     const saveUserName = () => {
-        const userRef = dbRef(db, `profile/${user.id}/userName`);
-        set(userRef, userName).then(() => {
+        const userRef = dbRef(db, `profile/${user.id}`);
+        update(userRef, {
+            userName: userName
+        }).then(() => {
             changeUserName(userName);
             setIsEditing(false);
+        }).catch(err => {
+            console.log(err.message);
         })
     }
 
