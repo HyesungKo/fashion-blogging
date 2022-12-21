@@ -44,7 +44,7 @@ function PostModal({open, handleClose, editingPost}) {
     useEffect(() => {
         if(images.length < 1) return;
         images.forEach((image, index) => {
-            const storageRef = stRef(storage, `test/${Math.floor(Date.now())}${index}`);
+            const storageRef = stRef(storage, `images/${Math.floor(Date.now())}${index}`);
             uploadBytes(storageRef, image).then(() => {
                 getDownloadURL(storageRef).then(url => {
                     setImageInfo(prevInfo => [...prevInfo, {
