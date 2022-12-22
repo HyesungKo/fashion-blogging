@@ -9,6 +9,10 @@ import { ref as stRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import IconButton from '@mui/material/IconButton';
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogTitle from '@mui/material/DialogTitle';
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -24,14 +28,24 @@ const style = {
     overflow: 'auto'
 };
 
-function PostModal({open, handleClose, editingPost}) {
+function PostModal({open, handleClose, editingPost, removePost}) {
 
     const [title, setTitle] = useState("");
     const [images, setImages] = useState([]);
     const [imageInfo, setImageInfo] = useState([]);
 
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleOpenDialog = () => {
+      setOpenDialog(true);
+    };
+  
+    const handleCloseDialog = () => {
+      setOpenDialog(false);
+    };
+  
+
     useEffect(() => {
-        // console.log(editingPost);
         if(editingPost !== null) {
             setTitle(editingPost.title)
             setImageInfo([])
@@ -45,13 +59,13 @@ function PostModal({open, handleClose, editingPost}) {
         if(images.length < 1) return;
         images.forEach((image, index) => {
             const storageRef = stRef(storage, `images/${Math.floor(Date.now())}${index}`);
-            uploadBytes(storageRef, image).then(() => {
+            uploadBytes(storageRef, image).then(photo => {
                 getDownloadURL(storageRef).then(url => {
                     setImageInfo(prevInfo => [...prevInfo, {
                         url: url,
                         category: '',
                         caption: '',
-                        link: '',
+                        link: ''
                     }]);
                 })                
             })
@@ -173,66 +187,88 @@ function PostModal({open, handleClose, editingPost}) {
     }
 
     return (
-        <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-        >
-            <Box sx={style}>
-                <Typography id="modal-modal-title" variant="h5" component="h2">
-                    Post Style
-                </Typography>
-                <TextField sx={{ width: "100%" }} id="title" label="Title" variant="standard" value={title} onChange={handleTitle} />
-                
-                <input style={{ margin: 10}} type="file" multiple accept="image/*" onChange={onImageChange} />
-                
-                {
-                    imageInfo.map((info, index) =>
-                        
-                        <Box sx={{ pl: 1, py: 1 }} key={index}>
-                            <Box mb={1} sx={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-                                <Typography variant='h6' color="inherit" noWrap>
-                                    Image {index+1}
-                                </Typography>
-                                <IconButton onClick={() => removePicture(index)}>
-                                    <DeleteForeverIcon sx={{fontSize: 30, color: "red"}} />
-                                </IconButton>
+        <Box>
+
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h5" component="h2">
+                        Post Style
+                    </Typography>
+                    <TextField sx={{ width: "100%" }} id="title" label="Title" variant="standard" value={title} onChange={handleTitle} />
+                    
+                    <input style={{ margin: 10}} type="file" multiple accept="image/*" onChange={onImageChange} />
+                    
+                    {
+                        imageInfo.map((info, index) =>
+                            
+                            <Box sx={{ pl: 1, py: 1 }} key={index}>
+                                <Box mb={1} sx={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+                                    <Typography variant='h6' color="inherit" noWrap>
+                                        Image {index+1}
+                                    </Typography>
+                                    <IconButton onClick={() => removePicture(index)}>
+                                        <DeleteForeverIcon sx={{fontSize: 30, color: "red"}} />
+                                    </IconButton>
+                                </Box>
+                                <img src={info.url} style={{objectFit: "contain", width: "100%", height: 400, backgroundColor: "black"}} alt="" />
+                                <FormControl fullWidth sx={{ width: "100%", marginTop: 1 }}>
+                                    <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                                    <Select
+                                        labelId="category-selector"
+                                        id="category-selector"
+                                        value={imageInfo[index].category}
+                                        defaultValue={"Accessories"}
+                                        label="Category"
+                                        onChange={e=>handleCategory(index, e)}
+                                    >
+                                        <MenuItem value={"Person"}>Person</MenuItem>
+                                        <MenuItem value={"Accessories"}>Accessories</MenuItem>
+                                        <MenuItem value={"Bags"}>Bags</MenuItem>
+                                        <MenuItem value={"Bottoms"}>Bottoms</MenuItem>
+                                        <MenuItem value={"Active Wear"}>Active Wear</MenuItem>
+                                        <MenuItem value={"Dresses"}>Dresses</MenuItem>
+                                        <MenuItem value={"Tops"}>Tops</MenuItem>
+                                        <MenuItem value={"Sunglasses"}>Sunglasses</MenuItem>
+                                        <MenuItem value={"Shoes"}>Shoes</MenuItem>
+                                        <MenuItem value={"Outwears"}>Outwears</MenuItem>
+                                        <MenuItem value={"Others"}>Others</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <TextField sx={{ width: "100%", margin: 1 }} label="Caption" variant="standard" value={imageInfo[index].caption} onChange={e=>handleCaption(index, e)} />
+                                <TextField sx={{ width: "100%", margin: 1 }} label="Link" variant="standard" value={imageInfo[index].link} onChange={e => handleLink(index, e)} />
                             </Box>
-                            <img src={info.url} style={{objectFit: "contain", width: "100%", height: 400, backgroundColor: "black"}} alt="" />
-                            <FormControl fullWidth sx={{ width: "100%", marginTop: 1 }}>
-                                <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                                <Select
-                                    labelId="category-selector"
-                                    id="category-selector"
-                                    value={imageInfo[index].category}
-                                    defaultValue={"Accessories"}
-                                    label="Category"
-                                    onChange={e=>handleCategory(index, e)}
-                                >
-                                    <MenuItem value={"Person"}>Person</MenuItem>
-                                    <MenuItem value={"Accessories"}>Accessories</MenuItem>
-                                    <MenuItem value={"Bags"}>Bags</MenuItem>
-                                    <MenuItem value={"Bottoms"}>Bottoms</MenuItem>
-                                    <MenuItem value={"Active Wear"}>Active Wear</MenuItem>
-                                    <MenuItem value={"Dresses"}>Dresses</MenuItem>
-                                    <MenuItem value={"Tops"}>Tops</MenuItem>
-                                    <MenuItem value={"Sunglasses"}>Sunglasses</MenuItem>
-                                    <MenuItem value={"Shoes"}>Shoes</MenuItem>
-                                    <MenuItem value={"Outwears"}>Outwears</MenuItem>
-                                    <MenuItem value={"Others"}>Others</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <TextField sx={{ width: "100%", margin: 1 }} label="Caption" variant="standard" value={imageInfo[index].caption} onChange={e=>handleCaption(index, e)} />
-                            <TextField sx={{ width: "100%", margin: 1 }} label="Link" variant="standard" value={imageInfo[index].link} onChange={e => handleLink(index, e)} />
-                        </Box>
-                    )
-                }
-                
-                <Button variant="contained" sx={{ width: "100%"}} disabled={false} onClick={uploadPost}>{editingPost? "Save": "Upload"}</Button>
-                
-            </Box>
-        </Modal>
+                        )
+                    }
+                    <Button variant="contained" sx={{ width: "100%", marginBottom: 2}} disabled={false} onClick={uploadPost}>{editingPost? "Save": "Upload"}</Button>
+                    {
+                        editingPost &&
+                        <Button variant="contained" sx={{ width: "100%", backgroundColor: "red"}} disabled={false} onClick={handleOpenDialog}>Delete This Post</Button>
+                    }
+                    
+                </Box>
+            </Modal>
+            
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="alert-dialog-title"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Do you want to delete this post?"}
+                </DialogTitle>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog}>Disagree</Button>
+                    <Button onClick={removePost} autoFocus>
+                        Agree
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
     )
 
 }

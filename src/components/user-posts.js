@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { db } from "./../firebase";
-import { get, ref } from "firebase/database";
+import { db, storage } from "./../firebase";
+import { get, ref, remove } from "firebase/database";
 import PostModal from "./post-modal";
 
 import Box from "@mui/material/Box";
@@ -8,6 +8,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent"
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import { deleteObject, ref as refSt } from "firebase/storage";
 
 function UserPosts({user}) {
 
@@ -19,7 +20,6 @@ function UserPosts({user}) {
     const handleOpen = () => setOpen(true);
     
     useEffect(() => {
-        // console.log(posts[0])
         let userPost = [];
         get(ref(db, 'posts')).then(snapshots => {
             snapshots.forEach(snapshot => {
@@ -40,9 +40,34 @@ function UserPosts({user}) {
         handleOpen()
     }
 
+    const removeEditPost = () => {
+        const photos = Object.values(editPost.info);
+        const editPostId = editPost.id;
+        photos.forEach((photo, index) => {
+            const fileName = photo.url.split("%2F")[1].split("?")[0]
+            deleteObject(refSt(storage, `images/${fileName}`)).then(() => {
+                if(index === photos.length-1) {
+                    remove(ref(db, `posts/${editPostId}`)).then(() => {
+                        setPosts(prevPost =>
+                            prevPost.filter(post => editPostId !== post.id)
+                        )
+                        handleClose();
+                        setEditPost({});
+                        alert("Post Deleted");
+                    }).catch(() => {
+                        console.log("Errof in post from DB")
+                    })
+                }
+            }).catch(() => {
+                console.log("Error in picture delete")
+            })
+        })
+    }
+
     return (
         <Box sx={{overflow:"auto"}}>
-            {posts.reverse().map((post, index) =>
+            {posts.map((post, index) =>
+                Object.keys(post).length !== 0 &&
                 <Card key={post.id + index} sx={{ display: 'flex', marginBottom: 2, cursor: "pointer" }} onClick={() => openEditPost(index)}>
                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                         <CardContent sx={{ flex: '1 0 auto' }}>
@@ -61,7 +86,7 @@ function UserPosts({user}) {
             )}
             {
                 Object.keys(editPost).length !== 0 &&
-                <PostModal open={open} handleClose={handleClose} editingPost={editPost} />
+                <PostModal open={open} handleClose={handleClose} editingPost={editPost} removePost={removeEditPost} />
             }
         </Box>
     )

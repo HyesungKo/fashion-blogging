@@ -65,9 +65,10 @@ function Post({post}) {
                 }
                 title={post.title}
                 titleTypographyProps={{
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: 500
                 }}
+                sx={{paddingBottom: 0}}
             >
             </CardHeader>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
