@@ -53,7 +53,7 @@ function Post({post}) {
     };
 
     return (
-        <Card sx={{ margin: 2}}>
+        <Card sx={{ margin: 1}}>
             <CardHeader
                 avatar={
                     <Avatar
@@ -74,12 +74,18 @@ function Post({post}) {
                 <Tabs
                     value={value}
                     onChange={handleChange}
-                    aria-label="basic tabs example" 
+                    aria-label="basic tabs example"
+                    variant="scrollable"
+                    allowScrollButtonsMobile
+                    scrollButtons={true}
                     >
 
                     {
                         postInfo.map((info, index) => 
-                            <Tab key={`${post.title}tab${index}`} label={info.category} {...a11yProps(index)} />
+                            <Tab 
+                                // sx={{border: "1px #ddd solid"}}
+                                key={`${post.title}tab${index}`}
+                                label={info.category} {...a11yProps(index)} />
                         )
                     }
                 </Tabs>
