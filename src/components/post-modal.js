@@ -262,9 +262,9 @@ function PostModal({open, handleClose, editingPost, removePost}) {
                     {"Do you want to delete this post?"}
                 </DialogTitle>
                 <DialogActions>
-                    <Button onClick={handleCloseDialog}>Disagree</Button>
+                    <Button onClick={handleCloseDialog}>No, Keep it.</Button>
                     <Button onClick={removePost} autoFocus>
-                        Agree
+                        Yes!
                     </Button>
                 </DialogActions>
             </Dialog>

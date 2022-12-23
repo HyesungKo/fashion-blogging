@@ -119,10 +119,10 @@ function HeaderBar({handleSearch}) {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <Toolbar sx={{ width: 280 }}>
-                            <CameraIcon sx={{ mr: 2 }} />
-                            <Typography variant="h5" color="inherit" noWrap>
-                                Celebrity Fashion
+                        <Toolbar sx={{ width: 300 }}>
+                            <CameraIcon sx={{ mr: 1 }} />
+                            <Typography variant="h5" color="inherit" noWrap fontSize={22}>
+                                CELEBRITY FASHION
                             </Typography>
                         </Toolbar>
                         <Search>
@@ -135,7 +135,7 @@ function HeaderBar({handleSearch}) {
                                 onChange={handleSearch}
                             />
                         </Search>
-                        <Box sx={{ width: 280, display: "flex", justifyContent: "end" }}>
+                        <Box sx={{ width: 300, display: "flex", justifyContent: "end" }}>
                             <Button
                                 sx={{ display: loggedIn ? "inline-flex" : "none" }}
                                 variant="outlined"

@@ -25,37 +25,34 @@ function Posts({searchTerm}) {
     }, [searchTerm])
 
     return  (
-        <div>
-            <Container>
-                <Grid
-                    container
-                    spacing={1}
-                >
-                    {
-                        posts.length > 0 ?
-                        posts.reverse().map((post, index) =>
-                            <Grid item key={`post${index}`} xs={12} md={6}>
-                                <Post post={post} />
-                            </Grid>
-                        )
-                        :
+        <Container sx={{padding: 0}}>
+            <Grid
+                container
+                spacing={1}
+            >
+                {
+                    posts.length > 0 ?
+                    posts.reverse().map((post, index) =>
+                        <Grid item key={`post${index}`} xs={12} md={6}>
+                            <Post post={post} />
+                        </Grid>
+                    )
+                    :
 
-                        searchTerm !== "" &&
-                        <Box
-                            sx={{width: "100%", padding: 20}}    
-                        >
-                            <Typography variant="h4">
-                                Sorry, No result for the search!
-                            </Typography>
-                            <Typography variant="h4">
-                                Try something else!
-                            </Typography>
-                        </Box>
-                    }
-                </Grid>
-                
-            </Container>
-        </div>
+                    searchTerm !== "" &&
+                    <Box
+                        sx={{width: "100%", padding: 20}}    
+                    >
+                        <Typography variant="h4">
+                            Sorry, No result for the search!
+                        </Typography>
+                        <Typography variant="h4">
+                            Try something else!
+                        </Typography>
+                    </Box>
+                }
+            </Grid>
+        </Container>
     )
 }
 
