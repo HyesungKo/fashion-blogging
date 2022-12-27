@@ -16,9 +16,10 @@ function Posts({searchTerm}) {
         get(postRef).then(snapshots => {
             setPosts([]);
             snapshots.forEach(snapshot => {
-                const data = snapshot.val();
-                if(data.title.toLowerCase().includes(searchTerm.toLowerCase())) {
-                    setPosts(prevPosts => [...prevPosts, data]);
+                const post = snapshot.val();
+                post['id'] = snapshot.key;
+                if(post.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+                    setPosts(prevPosts => [...prevPosts, post]);
                 }
            })
         })

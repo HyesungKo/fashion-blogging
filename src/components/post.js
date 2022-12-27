@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -9,9 +9,13 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import PropTypes from 'prop-types';
 import Link from '@mui/material/Link'
+import IconButton from '@mui/material/IconButton';
+import CommentIcon from '@mui/icons-material/Comment';
+import Comments from './comments';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
+
 
         return (
             <div
@@ -45,8 +49,12 @@ function a11yProps(index) {
 }
 
 function Post({post}) {
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = useState(0);
+    const [openComment, setOpenComment] = useState(false);
+
     const postInfo = Object.values(post.info);
+
+    const toggleOpenComment = () => setOpenComment(!openComment);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -107,11 +115,20 @@ function Post({post}) {
                                     {info.caption}
                                 </Typography>
                             }
-                            { info.category !== undefined &&
-                                <Link href={info.link} underline="hover">
-                                Where to buy
-                                </Link>
-                            }
+                            <Box sx={{ display: "flex", justifyContent: "space-between"}}>
+                                { info.link !== undefined &&
+                                    <Link pt={1} href={info.link} underline="hover">
+                                        Where to buy
+                                    </Link>
+                                }
+                                <IconButton sx={{padding: 0, paddingTop: 1, fontSize: 17}} onClick={toggleOpenComment}>
+                                    <CommentIcon sx={{fontSize: 20}} /> 
+                                    <Typography ml={0.5}>
+                                        {post.comments && Object.values(post.comments).length}
+                                    </Typography>
+                                </IconButton>
+                            </Box>
+                            <Comments openComment={openComment} post={post} />
                         </CardContent> 
                     </TabPanel>
                 )
