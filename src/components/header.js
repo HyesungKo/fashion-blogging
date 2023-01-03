@@ -82,7 +82,6 @@ function HeaderBar({handleSearch}) {
             setScreenWidth(window.innerWidth);
         }
         window.addEventListener('resize', handleWindowResize);
-        console.log(screenWidth);
 
         return () => {
             window.removeEventListener('resize', handleWindowResize);

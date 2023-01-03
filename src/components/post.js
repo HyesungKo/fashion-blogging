@@ -12,6 +12,7 @@ import Link from '@mui/material/Link'
 import IconButton from '@mui/material/IconButton';
 import CommentIcon from '@mui/icons-material/Comment';
 import Comments from './comments';
+// import SwipeableViews from 'react-swipeable-views';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
