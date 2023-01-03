@@ -19,11 +19,10 @@ function Comments({openComment, post}) {
     useEffect(() => {
         if(auth.currentUser) {
             setUserLoggedIn(true);
+            get(ref(db, `profile/${auth.currentUser.uid}/userName`)).then(snapshot => {
+                setUserName(snapshot.val());
+            })
         }
-
-        get(ref(db, `profile/${auth.currentUser.uid}/userName`)).then(snapshot => {
-            setUserName(snapshot.val());
-        })
 
         onValue(ref(db, `posts/${post.id}/comments`), snapshots => {
             setCommentList([]);
@@ -99,7 +98,7 @@ function Comments({openComment, post}) {
                 :
                 <Box mt={2}>
                     <Typography variant='h6' fontWeight={500}>
-                        Login to Leavel comments!
+                        Login to Leave comments!
                     </Typography>
                 </Box>
             }

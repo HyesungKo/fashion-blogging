@@ -11,7 +11,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box'
 
-import { Drawer } from '@mui/material';
+import { Drawer, IconButton } from '@mui/material';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Profile from './profile';
@@ -70,11 +70,25 @@ function HeaderBar({handleSearch}) {
     const [open, setOpen] = useState(false);
     const [openAccount, setOpenAccount] = useState(false); 
     const [curUser, setCurUser] = useState({});
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     const [loggedIn, setLoggedIn] = useState(false);
+    
+    useEffect(() => {
+        const handleWindowResize = () => {
+            setScreenWidth(window.innerWidth);
+        }
+        window.addEventListener('resize', handleWindowResize);
+        console.log(screenWidth);
+
+        return () => {
+            window.removeEventListener('resize', handleWindowResize);
+        }
+    })
+    
 
     useEffect(() => {
         onAuthStateChanged(auth, user => {
@@ -119,23 +133,62 @@ function HeaderBar({handleSearch}) {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <Toolbar sx={{ width: 300 }}>
-                            <CameraIcon sx={{ mr: 1 }} />
-                            <Typography variant="h5" color="inherit" noWrap fontSize={22}>
-                                CELEBRITY FASHION
-                            </Typography>
-                        </Toolbar>
-                        <Search>
-                            <SearchIconWrapper>
-                                <SearchIcon />
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                                placeholder="Search…"
-                                inputProps={{ 'aria-label': 'search' }}
-                                onChange={handleSearch}
-                            />
-                        </Search>
-                        <Box sx={{ width: 300, display: "flex", justifyContent: "end" }}>
+                        <Box width={screenWidth < 1000 ? "100vw" : "300px"} sx={{display: "flex", justifyContent: "space-between" }}>
+                            <Toolbar>
+                                <CameraIcon sx={{ mr: 1 }} />
+                                <Typography variant="h5" color="inherit" noWrap fontSize={22}>
+                                    CELEBRITY FASHION
+                                </Typography>
+                            </Toolbar>
+                            <Box sx={{display: screenWidth >= 1000 ? "none" : "flex", justifyContent: "end" }}>
+                                <Fragment key="right">
+                                    <Button sx={{padding: 0}} onClick={toggleDrawer(true)}>
+                                        <AccountCircleIcon sx={{fontSize: 30, color: "white", marginLeft: "auto"}} />   
+                                    </Button>
+                                    <Drawer
+                                        anchor="right"
+                                        open={openAccount}
+                                        onClose={toggleDrawer(false)}
+                                        >
+                                        <Profile user={curUser} changeUserName={changeUserName} loggedIn={loggedIn} loginSuccess={loginSuccess} logoutSuccess={logoutSuccess} toggleDrawer={toggleDrawer} />
+                                    </Drawer>
+                                </Fragment>
+                            </Box>
+                        </Box>
+                        {
+                            screenWidth < 1000 ?
+                            <Box width={"100vw"} display={"flex"} justifyContent={"space-between"} mb={1}>
+                                <Search>
+                                    <SearchIconWrapper>
+                                        <SearchIcon />
+                                    </SearchIconWrapper>
+                                    <StyledInputBase
+                                        placeholder="Search…"
+                                        inputProps={{ 'aria-label': 'search' }}
+                                        onChange={handleSearch}
+                                    />
+                                </Search>
+                                <IconButton
+                                    sx={{ display: loggedIn && screenWidth < 1000 ? "inline-flex" : "none", paddingRight: 0 }}
+                                    color="inherit"
+                                    onClick={handleOpen}
+                                >
+                                    <AddCircleOutlineIcon sx={{marginLeft: "auto"}} />
+                                </IconButton>
+                            </Box>
+                            :
+                            <Search >
+                                <SearchIconWrapper>
+                                    <SearchIcon />
+                                </SearchIconWrapper>
+                                <StyledInputBase
+                                    placeholder="Search…"
+                                    inputProps={{ 'aria-label': 'search' }}
+                                    onChange={handleSearch}
+                                />
+                            </Search>
+                        }
+                        <Box sx={{ width: 300, display: screenWidth < 1000 ? "none" : "flex", justifyContent: "end" }}>
                             <Button
                                 sx={{ display: loggedIn ? "inline-flex" : "none" }}
                                 variant="outlined"

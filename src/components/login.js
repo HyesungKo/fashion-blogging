@@ -26,15 +26,15 @@ function Login({toggleDrawer, loginSuccess}) {
             return signInWithEmailAndPassword(auth, email, password).then(credential => {
                 set(dbRef(db, `profile/${credential.user.uid}/lastLoggedIn`) , Date.now()).then(() => {
                     alert("Login Successful!");
-                    loginSuccess()
+                    loginSuccess();
                 }).catch(() => {
-                    alert("Something Wrong")
+                    alert("Something Wrong");
                 })
             }).catch(err => {
                 alert(err.message);
             })
         }).catch(() => {
-            alert("Something Wrong!")
+            alert("Something Wrong!");
         })
         
     }
@@ -53,10 +53,10 @@ function Login({toggleDrawer, loginSuccess}) {
                     loginSuccess();
                 })
             }).catch(err => {
-                alert(err.message)
+                alert(err.message);
             })
         }).catch(() => {
-            alert("Somthings Wrong, try again!")
+            alert("Somthings Wrong, try again!");
         })
     }
 
