@@ -65,6 +65,16 @@ function Comments({openComment, post}) {
         })
     }
 
+    const isValidUrl = (str) => {
+        let url;
+        try {
+            url = new URL(str);
+        } catch (error) {
+            return false
+        }
+        return url.protocol === "http:" || url.protocol === "https:";
+    }
+
     return (
         openComment &&
         <Box pt={1} maxHeight={300}>
@@ -75,7 +85,14 @@ function Comments({openComment, post}) {
                         <Box key={`${post.id} comment ${index+1}`} sx={{display: "flex", justifyContent: "space-between"}}>
                             <Box pt={0.5} display={"flex"}>
                                 <Typography fontWeight={500} fontSize={17} pr={2}>{comment.userName}</Typography>
-                                <Typography fontSize={17}>{comment.comment}</Typography>
+                                <Typography fontSize={17}>{
+                                    comment.comment.split(" ").map((word) => {
+                                        if(isValidUrl(word)) {
+                                            return <a style={{color: "#1976d2"}} href={word}>{word+ " "} </a>
+                                        }
+                                        return word + " "
+                                    })
+                                }</Typography>
                             </Box>
                             {
                                 auth.currentUser && auth.currentUser.uid === comment.userId &&
