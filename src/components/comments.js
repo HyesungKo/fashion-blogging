@@ -78,7 +78,7 @@ function Comments({openComment, post}) {
                                 <Typography fontSize={17}>{comment.comment}</Typography>
                             </Box>
                             {
-                                auth.currentUser.uid === comment.userId &&
+                                auth.currentUser && auth.currentUser.uid === comment.userId &&
                                 <IconButton sx={{padding: 0, marginLeft: 2}} onClick={() => deleteComment(comment.key)}>
                                     <DeleteOutlineIcon fontSize='15' />
                                 </IconButton>
