@@ -76,9 +76,9 @@ function Comments({openComment, post}) {
     }
 
     return (
-        openComment &&
+        // openComment &&
         <Box pt={1} maxHeight={300}>
-            <Box maxHeight={260} overflow={"auto"}>
+            <Box height={!openComment && 0} maxHeight={260} overflow={"auto"}>
                 {
                     commentList.length !== 0 &&
                     commentList.map((comment, index) =>
@@ -105,19 +105,21 @@ function Comments({openComment, post}) {
                 }
             </Box>
             {
-                userLoggedIn ?
-                <Box mt={1} sx={{ display: "flex"}}>
-                    <TextField size='small' sx={{ width: "95%", height: 30}} id="outlined-basic" label="comment.." variant="outlined" value={comment} onChange={handleComment} />
-                    <IconButton variant="contained" onClick={uploadComment}>
-                        <SendIcon />
-                    </IconButton>
-                </Box>
-                :
-                <Box mt={2}>
-                    <Typography variant='h6' fontWeight={500}>
-                        Login to Leave comments!
-                    </Typography>
-                </Box>
+                openComment && (
+                    userLoggedIn ?
+                    <Box mt={1} sx={{ display: "flex"}}>
+                        <TextField size='small' sx={{ width: "95%", height: 30}} id="outlined-basic" label="comment.." variant="outlined" value={comment} onChange={handleComment} />
+                        <IconButton variant="contained" onClick={uploadComment}>
+                            <SendIcon />
+                        </IconButton>
+                    </Box>
+                    :
+                    <Box mt={2}>
+                        <Typography variant='h6' fontWeight={500}>
+                            Login to Leave comments!
+                        </Typography>
+                    </Box>
+                )
             }
         </Box>
     )

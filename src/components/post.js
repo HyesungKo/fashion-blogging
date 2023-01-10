@@ -109,7 +109,7 @@ function Post({post}) {
                             alt={info.caption + "1"}
                             style={{objectFit: "contain", width: "100%", height: 400}}
                         />
-                        <CardContent>
+                        <CardContent sx={{paddingBottom: "10px !important"}}>
                             {
                                 info.caption !== undefined &&
                                 <Typography variant="body1" color="text.secondary">
