@@ -7,8 +7,8 @@ function App() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+  const handleSearch = (searchTerm) => {
+    setSearchTerm(searchTerm);
   }
 
   return (

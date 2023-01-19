@@ -164,7 +164,7 @@ function HeaderBar({handleSearch}) {
                                     <StyledInputBase
                                         placeholder="Search…"
                                         inputProps={{ 'aria-label': 'search' }}
-                                        onChange={handleSearch}
+                                        onChange={e => handleSearch(e.target.value)}
                                     />
                                 </Search>
                                 <IconButton
@@ -183,7 +183,7 @@ function HeaderBar({handleSearch}) {
                                 <StyledInputBase
                                     placeholder="Search…"
                                     inputProps={{ 'aria-label': 'search' }}
-                                    onChange={handleSearch}
+                                    onChange={e => handleSearch(e.target.value)}
                                 />
                             </Search>
                         }

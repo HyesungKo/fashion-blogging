@@ -88,7 +88,7 @@ function Comments({openComment, post}) {
                                 <Typography fontSize={17}>{
                                     comment.comment.split(" ").map((word) => {
                                         if(isValidUrl(word)) {
-                                            return <a style={{color: "#1976d2"}} href={word}>{word+ " "} </a>
+                                            return <a key={`${post.id} comment ${index+1} url`} style={{color: "#1976d2"}} href={word}>{word+ " "} </a>
                                         }
                                         return word + " "
                                     })

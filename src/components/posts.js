@@ -2,7 +2,7 @@ import Post from './post';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import { db } from './../firebase';
-import { ref, get } from 'firebase/database';
+import { ref, get, query, orderByKey, limitToLast, orderByChild, equalTo,  } from 'firebase/database';
 import { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 
@@ -12,17 +12,30 @@ function Posts({searchTerm}) {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
-        const postRef = ref(db, 'posts');
-        get(postRef).then(snapshots => {
-            setPosts([]);
-            snapshots.forEach(snapshot => {
-                const post = snapshot.val();
-                post['id'] = snapshot.key;
-                if(post.title.toLowerCase().includes(searchTerm.toLowerCase())) {
-                    setPosts(prevPosts => [...prevPosts, post]);
-                }
-           })
-        })
+        const timer = setTimeout(() => {
+            const postRef = ref(db, 'posts');
+            // const queryConfig = () => {
+            //     if(searchTerm === "") {
+            //         return query(postRef, orderByKey());
+            //     } else {
+            //         return query(postRef, orderByChild('title'), equalTo(searchTerm.toLowerCase()))
+            //     }
+            // }
+            get(query(postRef, orderByKey())).then(snapshots => {
+                setPosts([]);
+                snapshots.forEach(snapshot => {
+                    const post = snapshot.val();
+                    post['id'] = snapshot.key;
+                    if(post.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+                        setPosts(prevPosts => {
+                            return [...prevPosts, post]
+                        });
+                    }
+                })
+            })    
+        }, 500);
+        
+        return () => clearTimeout(timer)
     }, [searchTerm])
 
     return  (
